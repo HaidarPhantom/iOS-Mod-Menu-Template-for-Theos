@@ -44,15 +44,21 @@ include $(THEOS)/makefiles/common.mk
 TWEAK_NAME = @@PROJECTNAME@@
 
 @@PROJECTNAME@@_CFLAGS = -fobjc-arc
-@@PROJECTNAME@@_CCFLAGS = -std=c++11 -fno-rtti -fno-exceptions -DNDEBUG
+@@PROJECTNAME@@_CCFLAGS = -std=c++17 -fno-rtti -fno-exceptions -DNDEBUG -DkITTYMEMORY_DEBUG
 
 ifeq ($(IGNORE_WARNINGS),1)
   @@PROJECTNAME@@_CFLAGS += -w
   @@PROJECTNAME@@_CCFLAGS += -w
 endif
 
+ifeq ($(_NO_SUBSTRATE), 1)
+## define kNO_SUBSTRATE to not use MSHookMemory
+@@PROJECTNAME@@_CCFLAGS += -DkNO_SUBSTRATE
+endif
 
 @@PROJECTNAME@@_FILES = Tweak.xm $(MENU_SRC) $(KITTYMEMORY_SRC) $(SCLALERTVIEW_SRC)
+
+@@PROJECTNAME@@_OBJ_FILES = KittyMemory/Deps/Keystone/libs-ios/arm64/libkeystone.a
 
 @@PROJECTNAME@@_LIBRARIES += substrate
 

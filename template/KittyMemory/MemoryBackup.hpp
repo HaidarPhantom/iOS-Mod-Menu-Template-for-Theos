@@ -1,14 +1,17 @@
 //
-//  MemoryBackup.hpp
+//  MemoryBackup.h
 //
 //  Created by MJ (Ruit) on 4/19/20.
 //
 
 #pragma once
 
+#include <string>
 #include <vector>
+#include <cstdint>
 
 #include "KittyMemory.hpp"
+
 
 class MemoryBackup
 {
@@ -22,27 +25,16 @@ public:
     MemoryBackup();
     ~MemoryBackup();
 
-    /*
-     * expects library name and relative address
-     */
-    MemoryBackup(const char *fileName, uintptr_t address, size_t backup_size);
+    static MemoryBackup createBackup(uintptr_t absolute_address, size_t backup_size);
 
-    /*
-     * expects absolute address
-     */
-    MemoryBackup(uintptr_t absolute_address, size_t backup_size);
-    
+#ifdef __ANDROID__
+    static MemoryBackup createBackup(const KittyMemory::ProcMap &map, uintptr_t address, size_t backup_size);
+#elif __APPLE__
+    static MemoryBackup createBackup(const char *fileName, uintptr_t address, size_t backup_size);
+#endif
 
-    /*
-     * Validate backup
-     */
     bool isValid() const;
-
     size_t get_BackupSize() const;
-
-    /*
-     * Returns pointer to the target address
-     */
     uintptr_t get_TargetAddress() const;
 
     /*
@@ -51,9 +43,12 @@ public:
     bool Restore();
 
     /*
-     * Returns current target address bytes as hex string
+     * Returns hex string of the current target address bytes
      */
     std::string get_CurrBytes() const;
 
+    /*
+     * Returns hex string of the original bytes
+     */
     std::string get_OrigBytes() const;
 };
